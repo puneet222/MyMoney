@@ -99,7 +99,6 @@ func VerifyDataSize(command common.Command, data []string) bool {
 		return n == 1
 	case common.REBALACE:
 		return n == 0
-	default:
-		return false
 	}
+	return false
 }
