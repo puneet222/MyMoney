@@ -35,7 +35,7 @@ func BuildPortfolio(commands []*commander.CommandInfo, startYear int) *Portfolio
 			if command.Month <= portfolio.currentMonth {
 				fmt.Println(portfolio.GetInvestment(portfolio.currentYearIndex, command.Month).Output())
 			}
-		case common.REBALACE:
+		case common.REBALANCE:
 			if portfolio.lastRebalance != nil {
 				fmt.Println(portfolio.lastRebalance.Output())
 			} else {
