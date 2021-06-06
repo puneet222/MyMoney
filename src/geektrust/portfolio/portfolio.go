@@ -55,7 +55,7 @@ func (p *Portfolio) AddInvestment(investment *Investment) {
 }
 
 func (p *Portfolio) Rebalance() {
-	currentInvestment := p.getCurrentInvestment()
+	currentInvestment := p.GetCurrentInvestment()
 	totalInvestment := currentInvestment.GetTotalInvestment()
 	rebalancedEquity := totalInvestment * (p.allocation.Equity/100)
 	rebalancedDebt := totalInvestment * (p.allocation.Debt/100)
@@ -67,14 +67,14 @@ func (p *Portfolio) Rebalance() {
 	}
 	investment.RoundOffInvestment()
 	p.investmentHistory[p.currentYearIndex][p.currentMonth] = investment
-	p.lastRebalance = p.getCurrentInvestment()
+	p.lastRebalance = p.GetCurrentInvestment()
 }
 
-func (p *Portfolio) setSip(sip *SIP) {
+func (p *Portfolio) SetSip(sip *SIP) {
 	p.sip = sip
 }
 
-func (p *Portfolio) getCurrentInvestment() *Investment {
+func (p *Portfolio) GetCurrentInvestment() *Investment {
 	return p.investmentHistory[p.currentYearIndex][p.currentMonth]
 }
 
@@ -95,8 +95,13 @@ func (p *Portfolio) String() string {
 			}
 		}
 	}
-	sb.WriteString(p.sip.String())
-	sb.WriteString(p.allocation.String())
-	sb.WriteString("---------------------------------------------------------\n")
+	if p.sip != nil {
+		sb.WriteString(p.sip.String())
+	}
+	if p.allocation != nil {
+		sb.WriteString(p.allocation.String())
+	}
+	sb.WriteString("Current Month: " + p.currentMonth.String())
+	sb.WriteString("\n---------------------------------------------------------\n")
 	return sb.String()
 }

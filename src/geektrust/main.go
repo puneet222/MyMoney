@@ -10,7 +10,7 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	inputFile := "input3.txt"
+	inputFile := "input.txt"
 	if len(args) > 0 {
 		inputFile = args[0]
 	}
@@ -23,5 +23,6 @@ func main() {
 	commands := commander.GenerateCommands(data)
 	// generate portfolio from commands
 	startYear := 2021
-	portfolio.BuildPortfolio(commands, startYear)
+	p := portfolio.BuildPortfolio(commands, startYear)
+	fmt.Println(p)
 }

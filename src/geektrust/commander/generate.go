@@ -36,7 +36,7 @@ func NewCommandInfo(command common.Command, data []string) *CommandInfo {
 		month = common.GetMonth(data[n-1])
 	case common.BALANCE:
 		month = common.GetMonth(data[0]) // balance command only has month
-	case common.REBALACE:
+	case common.REBALANCE:
 		// do nothing
 	}
 	return &CommandInfo{command, investmentData, month}
@@ -60,7 +60,7 @@ func GenerateCommands(data []byte) []*CommandInfo {
 		case "BALANCE":
 			commands = append(commands, NewCommandInfo(common.BALANCE, commandData))
 		case "REBALANCE":
-			commands = append(commands, NewCommandInfo(common.REBALACE, commandData))
+			commands = append(commands, NewCommandInfo(common.REBALANCE, commandData))
 		}
 	}
 	return commands
@@ -97,7 +97,7 @@ func VerifyDataSize(command common.Command, data []string) bool {
 		return n == 4
 	case common.BALANCE:
 		return n == 1
-	case common.REBALACE:
+	case common.REBALANCE:
 		return n == 0
 	}
 	return false

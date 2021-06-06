@@ -59,11 +59,11 @@ const (
 	SIP
 	CHANGE
 	BALANCE
-	REBALACE
+	REBALANCE
 )
 
 func (c Command) String() string {
-	return [...]string{"ALLOCATE", "SIP", "CHANGE", "BALANCE", "REBALACE"}[c]
+	return [...]string{"ALLOCATE", "SIP", "CHANGE", "BALANCE", "REBALANCE"}[c]
 }
 
 func GetCommand(command string) Command {
@@ -77,7 +77,7 @@ func GetCommand(command string) Command {
 	case "BALANCE":
 		return BALANCE
 	case "REBALANCE":
-		return REBALACE
+		return REBALANCE
 	default:
 		panic("command not supported")
 	}
