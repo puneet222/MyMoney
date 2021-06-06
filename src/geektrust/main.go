@@ -10,7 +10,7 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	inputFile := "input.txt"
+	inputFile := "input3.txt"
 	if len(args) > 0 {
 		inputFile = args[0]
 	}

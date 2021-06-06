@@ -20,7 +20,7 @@ type CommandInfo struct {
 }
 
 func NewCommandInfo(command common.Command, data []string) *CommandInfo {
-	if !verifyDataSize(command, data) {
+	if !VerifyDataSize(command, data) {
 		fmt.Errorf("data size is not correct based on command: %v", command.String())
 	}
 	n := len(data) // n -> size of data
@@ -28,11 +28,11 @@ func NewCommandInfo(command common.Command, data []string) *CommandInfo {
 	var month common.Month  // update according to command
 	switch command {
 	case common.ALLOCATE:
-		investmentData = generateInvestmentData(data)
+		investmentData = GenerateInvestmentData(data)
 	case common.SIP:
-		investmentData = generateInvestmentData(data)
+		investmentData = GenerateInvestmentData(data)
 	case common.CHANGE:
-		investmentData = generateInvestmentData(data[:n-1])
+		investmentData = GenerateInvestmentData(data[:n-1])
 		month = common.GetMonth(data[n-1])
 	case common.BALANCE:
 		month = common.GetMonth(data[0]) // balance command only has month
@@ -66,7 +66,7 @@ func GenerateCommands(data []byte) []*CommandInfo {
 	return commands
 }
 
-func generateInvestmentData(data []string) InvestmentData {
+func GenerateInvestmentData(data []string) InvestmentData {
 	// clean data
 	for i, d := range data {
 		data[i] = strings.ReplaceAll(d, "%", "")
@@ -86,7 +86,7 @@ func generateInvestmentData(data []string) InvestmentData {
 	return InvestmentData{equity, debt, gold}
 }
 
-func verifyDataSize(command common.Command, data []string) bool {
+func VerifyDataSize(command common.Command, data []string) bool {
 	n := len(data)
 	switch command {
 	case common.ALLOCATE:
