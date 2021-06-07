@@ -25,19 +25,19 @@ func BuildPortfolio(commands []*commander.CommandInfo, startYear int) *Portfolio
 				// create copy of last investment
 				newInvestment := portfolio.GetCurrentInvestment().DeepCopy()
 				// add sip
-				newInvestment.AddSIP(portfolio.sip)
+				newInvestment.AddSIP(portfolio.Sip)
 				// update investment based on change
 				newInvestment.UpdateInvestment(roc)
 				newInvestment.RoundOffInvestment()
 				portfolio.AddInvestment(newInvestment)
 			}
 		case common.BALANCE:
-			if command.Month <= portfolio.currentMonth {
-				fmt.Println(portfolio.GetInvestment(portfolio.currentYearIndex, command.Month).Output())
+			if command.Month <= portfolio.CurrentMonth {
+				fmt.Println(portfolio.GetInvestment(portfolio.CurrentYearIndex, command.Month).Output())
 			}
 		case common.REBALANCE:
-			if portfolio.lastRebalance != nil {
-				fmt.Println(portfolio.lastRebalance.Output())
+			if portfolio.LastRebalance != nil {
+				fmt.Println(portfolio.LastRebalance.Output())
 			} else {
 				fmt.Println("CANNOT_REBALANCE")
 			}

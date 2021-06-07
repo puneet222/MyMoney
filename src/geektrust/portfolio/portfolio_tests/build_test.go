@@ -1,8 +1,9 @@
-package portfolio
+package portfolio_tests
 
 import (
 	"geektrust/commander"
 	"geektrust/common"
+	"geektrust/portfolio"
 	"testing"
 )
 
@@ -19,27 +20,27 @@ var commands = []*commander.CommandInfo{
 	{common.REBALANCE, commander.InvestmentData{}, common.Month(0)},
 }
 
-var investments = []*Investment{
+var investments = []*portfolio.Investment{
 	{6240, 3300, 1020},
 	{7416, 6020, 1520},
 	{10593, 7897, 2272},
 	{13600, 8630, 2966},
 }
 
-var expectedPortfolio = Portfolio{
-	investmentHistory: [][]*Investment{investments},
-	sip:               &SIP{2000, 1000, 500},
-	allocation:        &Allocation{60, 30, 10},
-	lastRebalance:     nil,
-	currentMonth:      common.APRIL,
-	currentYearIndex:  0,
-	startYear:         year,
+var expectedPortfolio = portfolio.Portfolio{
+	InvestmentHistory: [][]*portfolio.Investment{investments},
+	Sip:               &portfolio.SIP{Equity: 2000, Debt: 1000, Gold: 500},
+	Allocation:        &portfolio.Allocation{Equity: 60, Debt: 30, Gold: 10},
+	LastRebalance:     nil,
+	CurrentMonth:      common.APRIL,
+	CurrentYearIndex:  0,
+	StartYear:         year,
 }
 
 func TestBuildPortfolio(t *testing.T) {
-	portfolio := BuildPortfolio(commands, year)
-	if expectedPortfolio.String() != portfolio.String() {
+	p := portfolio.BuildPortfolio(commands, year)
+	if expectedPortfolio.String() != p.String() {
 		t.Errorf("Error while creating new portfolio from commands, expected %v but got %v",
-			expectedPortfolio.String(), portfolio)
+			expectedPortfolio.String(), p)
 	}
 }

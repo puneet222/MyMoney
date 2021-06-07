@@ -1,6 +1,7 @@
-package commander
+package commander_tests
 
 import (
+	"geektrust/commander"
 	"geektrust/common"
 	"reflect"
 	"testing"
@@ -9,14 +10,14 @@ import (
 
 func TestGenerateCommands(t *testing.T) {
 	data := []byte("ALLOCATE 6000 3000 1000\nSIP 2000 1000 500\nCHANGE 4.00% 10.00% 2.15% FEBRUARY\nBALANCE MARCH\nREBALANCE\n")
-	expected := []*CommandInfo{
-		{common.ALLOCATE, InvestmentData{6000, 3000, 1000}, common.Month(0)},
-		{common.SIP, InvestmentData{2000, 1000, 500}, common.Month(0)},
-		{common.CHANGE, InvestmentData{4.00, 10.00, 2.15}, common.FEBRUARY},
-		{common.BALANCE, InvestmentData{}, common.MARCH},
-		{common.REBALACE, InvestmentData{}, common.Month(0)},
+	expected := []*commander.CommandInfo{
+		{common.ALLOCATE, commander.InvestmentData{Equity: 6000, Debt: 3000, Gold: 1000}, common.Month(0)},
+		{common.SIP, commander.InvestmentData{Equity: 2000, Debt: 1000, Gold: 500}, common.Month(0)},
+		{common.CHANGE, commander.InvestmentData{Equity: 4.00, Debt: 10.00, Gold: 2.15}, common.FEBRUARY},
+		{common.BALANCE, commander.InvestmentData{}, common.MARCH},
+		{common.REBALANCE, commander.InvestmentData{}, common.Month(0)},
 	}
-	xci := GenerateCommands(data)
+	xci := commander.GenerateCommands(data)
 	if !reflect.DeepEqual(xci, expected) {
 		t.Errorf("Error while generating commands expected %v but got %v", expected, xci)
 	}
@@ -24,27 +25,27 @@ func TestGenerateCommands(t *testing.T) {
 
 func TestGenerateInvestmentData(t *testing.T) {
 	data := []string{"10.00%", "-20.45%", "3.56%"}
-	expected := InvestmentData{10.00, -20.45, 3.56}
-	id := GenerateInvestmentData(data)
+	expected := commander.InvestmentData{Equity: 10.00, Debt: -20.45, Gold: 3.56}
+	id := commander.GenerateInvestmentData(data)
 	if !reflect.DeepEqual(id, expected) {
 		t.Errorf("Error while generating investment data expected %v but got %v", expected, id)
 	}
 	// failing test case
 	data = []string{"1Q.00%", "-2W.45%", "3C.56%"}
-	expected = InvestmentData{10.00, -20.45, 3.56}
-	id = GenerateInvestmentData(data)
+	expected = commander.InvestmentData{Equity: 10.00, Debt: -20.45, Gold: 3.56}
+	id = commander.GenerateInvestmentData(data)
 	if reflect.DeepEqual(id, expected) {
 		t.Errorf("Error data does not supposed to be equal %v & %v", expected, id)
 	}
 }
 
 func TestNewCommandInfo(t *testing.T) {
-	investmentData := InvestmentData{6000, 3000, 1000}
+	investmentData := commander.InvestmentData{Equity: 6000, Debt: 3000, Gold: 1000}
 	command := common.ALLOCATE
 	month := common.JANUARY
-	expected := CommandInfo{command, investmentData, month}
+	expected := commander.CommandInfo{Name: command, Data: investmentData, Month: month}
 	data := []string{"6000", "3000", "1000"}
-	ci := *(NewCommandInfo(command, data)) // dereference as this function gives the address
+	ci := *(commander.NewCommandInfo(command, data)) // dereference as this function gives the address
 	if !reflect.DeepEqual(ci, expected) {
 		t.Errorf("Error while creating CommandInfo expected %v but got %v", expected, ci)
 	}
@@ -53,24 +54,24 @@ func TestNewCommandInfo(t *testing.T) {
 func TestVerifyDataSize(t *testing.T) {
 	allocate := common.ALLOCATE
 	data := []string{"1000", "2000", "3000"}
-	if !VerifyDataSize(allocate, data) {
+	if !commander.VerifyDataSize(allocate, data) {
 		t.Errorf("Error on verify data  size for %s Command", allocate)
 	}
 	sip := common.SIP
-	if !VerifyDataSize(sip, data) {
+	if !commander.VerifyDataSize(sip, data) {
 		t.Errorf("Error on verify data  size for %s Command", sip)
 	}
 	balance := common.BALANCE
-	if VerifyDataSize(balance, data) {
+	if commander.VerifyDataSize(balance, data) {
 		t.Errorf("Error on verify data  size for %s Command", balance)
 	}
-	rebalance := common.REBALACE
-	if VerifyDataSize(rebalance, data) {
+	rebalance := common.REBALANCE
+	if commander.VerifyDataSize(rebalance, data) {
 		t.Errorf("Error on verify data  size for %s Command", balance)
 	}
 	data = append(data, "TEST")
 	change := common.CHANGE
-	if !VerifyDataSize(change, data) {
+	if !commander.VerifyDataSize(change, data) {
 		t.Errorf("Error on verify data  size for %s Command", balance)
 	}
 }
