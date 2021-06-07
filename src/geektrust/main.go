@@ -23,6 +23,7 @@ func main() {
 	commands := commander.GenerateCommands(data)
 	// generate portfolio from commands
 	startYear := 2021
-	p := portfolio.BuildPortfolio(commands, startYear)
-	fmt.Println(p)
+	_ = portfolio.BuildPortfolio(commands, startYear)
+	// for printing portfolio
+	//fmt.Println(p)
 }
