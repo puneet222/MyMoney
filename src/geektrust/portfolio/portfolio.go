@@ -58,11 +58,7 @@ func (p *Portfolio) Rebalance() {
 	rebalancedEquity := totalInvestment * (p.GetAllocation().GetEquity()/100)
 	rebalancedDebt := totalInvestment * (p.GetAllocation().GetDebt()/100)
 	rebalancedGold := totalInvestment * (p.GetAllocation().GetGold()/100)
-	investment := &Investment{
-		rebalancedEquity,
-		rebalancedDebt,
-		rebalancedGold,
-	}
+	investment := NewInvestment(rebalancedEquity, rebalancedDebt, rebalancedGold)
 	investment.RoundOffInvestment()
 	p.UpdateCurrentInvestment(investment)
 	p.SetLastRebalance(p.GetCurrentInvestment())
