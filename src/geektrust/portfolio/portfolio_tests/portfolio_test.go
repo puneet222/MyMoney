@@ -16,18 +16,17 @@ func TestNewPortfolio(t *testing.T) {
 	year := 2021
 	p := portfolio.NewPortfolio(&investment, year)
 	// create expected portfolio
-	investmentHistory := make([][]*portfolio.Investment, 0)
-	investments := make([]*portfolio.Investment, 12, 12) // initialize yearly investments
-	investments[common.JANUARY] = &investment            // add January investment
-	investmentHistory = append(investmentHistory, investments)
+	investmentHistory := make(map[int]*portfolio.YearlyInvestment)
+	var investments [12]*portfolio.Investment // initialize yearly investments
+	investments[common.JANUARY] = &investment        // add January investment
+	investmentHistory[year] = portfolio.NewYearlyInvestment(2021, investments)
 	expected := portfolio.Portfolio{
 		InvestmentHistory: investmentHistory,
 		Sip:               nil,
 		Allocation:        investment.GetAllocation(),
 		LastRebalance:     nil,
 		CurrentMonth:      0,
-		CurrentYearIndex:  0,
-		StartYear:         year,
+		CurrentYear:         year,
 	}
 	if expected.String() != p.String() {
 		t.Errorf("Error while creating new portfolio, expected %v but got %v", expected, p)
@@ -71,8 +70,8 @@ func TestPortfolio_AddInvestment(t *testing.T) {
 		}
 		if i == 11 {
 			// check for year change
-			if p.CurrentYearIndex != 1 {
-				t.Errorf("Year not updated on adding investment, expected 1 but got %d", p.CurrentYearIndex)
+			if p.CurrentYear == 2021 {
+				t.Errorf("Year not updated on adding investment, expected 2022 but got %d", p.CurrentYear)
 			}
 			// check for month update
 			if p.CurrentMonth != common.JANUARY {
@@ -124,8 +123,8 @@ func TestPortfolio_GetInvestment(t *testing.T) {
 	expected := portfolio.Investment{Equity: 2000, Debt: 3000, Gold: 4000}
 	p := getMockPortfolio()
 	p.AddInvestment(&investment) // will add as february's investment
-	if expected.String() != p.GetInvestment(p.CurrentYearIndex, common.FEBRUARY).String() {
+	if expected.String() != p.GetInvestment(p.CurrentYear, common.FEBRUARY).String() {
 		t.Errorf("Error while getting specific month's investment, expected %v but got %v",
-			expected, p.GetInvestment(p.CurrentYearIndex, common.FEBRUARY))
+			expected, p.GetInvestment(p.CurrentYear, common.FEBRUARY))
 	}
 }

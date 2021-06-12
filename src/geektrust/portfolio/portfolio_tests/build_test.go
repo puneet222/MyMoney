@@ -20,21 +20,25 @@ var commands = []*commander.CommandInfo{
 	{common.REBALANCE, commander.InvestmentData{}, common.Month(0)},
 }
 
-var investments = []*portfolio.Investment{
+var investments = [12]*portfolio.Investment{
 	{6240, 3300, 1020},
 	{7416, 6020, 1520},
 	{10593, 7897, 2272},
 	{13600, 8630, 2966},
 }
 
+var yearlyInvestments = portfolio.YearlyInvestment{
+	Year:        year,
+	Investments: investments,
+}
+
 var expectedPortfolio = portfolio.Portfolio{
-	InvestmentHistory: [][]*portfolio.Investment{investments},
+	InvestmentHistory: map[int]*portfolio.YearlyInvestment{year: &yearlyInvestments},
 	Sip:               &portfolio.SIP{Equity: 2000, Debt: 1000, Gold: 500},
 	Allocation:        &portfolio.Allocation{Equity: 60, Debt: 30, Gold: 10},
 	LastRebalance:     nil,
 	CurrentMonth:      common.APRIL,
-	CurrentYearIndex:  0,
-	StartYear:         year,
+	CurrentYear:       year,
 }
 
 func TestBuildPortfolio(t *testing.T) {

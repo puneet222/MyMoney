@@ -6,6 +6,7 @@ import (
 	"geektrust/portfolio"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	// generate commands from input file
 	commands := commander.GenerateCommands(data)
 	// generate portfolio from commands
-	startYear := 2021
+	startYear := time.Now().Year()
 	_ = portfolio.BuildPortfolio(commands, startYear)
 	// for printing portfolio
 	//fmt.Println(p)

@@ -57,20 +57,16 @@ func (i *Investment) DeepCopy() *Investment {
 	}
 
 	decoder := gob.NewDecoder(&b)
-	copy := Investment{}
-	err = decoder.Decode(&copy)
+	icopy := Investment{}
+	err = decoder.Decode(&icopy)
 	if err != nil {
 		panic("error while deep copying (decoding) investment object")
 	}
-	return &copy
+	return &icopy
 }
 
 func (i *Investment) String() string {
 	return fmt.Sprintf("Equity %f | Debt %f | Gold %f\n", i.Equity, i.Debt, i.Gold)
-}
-
-func (i *Investment) Output() string {
-	return fmt.Sprintf("%d %d %d", int(i.Equity), int(i.Debt), int(i.Gold))
 }
 
 func (s *SIP) String() string {
@@ -79,4 +75,8 @@ func (s *SIP) String() string {
 
 func (a *Allocation) String() string {
 	return fmt.Sprintf("Allocations Equity: %d%% Debt: %d%% Gold: %d%%\n", int(a.Equity), int(a.Debt), int(a.Gold))
+}
+
+func (i *Investment) Output() string {
+	return fmt.Sprintf("%d %d %d", int(i.Equity), int(i.Debt), int(i.Gold))
 }
