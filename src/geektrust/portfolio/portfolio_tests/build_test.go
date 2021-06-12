@@ -32,16 +32,19 @@ var yearlyInvestments = portfolio.YearlyInvestment{
 	Investments: investments,
 }
 
-var expectedPortfolio = portfolio.Portfolio{
-	InvestmentHistory: map[int]*portfolio.YearlyInvestment{year: &yearlyInvestments},
-	Sip:               &portfolio.SIP{Equity: 2000, Debt: 1000, Gold: 500},
-	Allocation:        &portfolio.Allocation{Equity: 60, Debt: 30, Gold: 10},
-	LastRebalance:     nil,
-	CurrentMonth:      common.APRIL,
-	CurrentYear:       year,
+var expectedPortfolio = portfolio.Portfolio{}
+
+func setup() {
+	expectedPortfolio.SetInvestmentHistory(map[int]*portfolio.YearlyInvestment{year: &yearlyInvestments})
+	expectedPortfolio.SetAllocation(&portfolio.Allocation{Equity: 60, Debt: 30, Gold: 10})
+	expectedPortfolio.SetSip(&portfolio.SIP{Equity: 2000, Debt: 1000, Gold: 500})
+	expectedPortfolio.SetLastRebalance(nil)
+	expectedPortfolio.SetCurrentMonth(common.APRIL)
+	expectedPortfolio.SetCurrentYear(year)
 }
 
 func TestBuildPortfolio(t *testing.T) {
+	setup()
 	p := portfolio.BuildPortfolio(commands, year)
 	if expectedPortfolio.String() != p.String() {
 		t.Errorf("Error while creating new portfolio from commands, expected %v but got %v",

@@ -7,12 +7,12 @@ import (
 )
 
 type Portfolio struct {
-	InvestmentHistory map[int]*YearlyInvestment // to store year also
-	Sip *SIP
-	Allocation *Allocation
-	LastRebalance *Investment
-	CurrentMonth common.Month
-	CurrentYear int
+	investmentHistory map[int]*YearlyInvestment
+	sip *SIP
+	allocation *Allocation
+	lastRebalance *Investment
+	currentMonth common.Month
+	currentYear int
 }
 
 func NewPortfolio(investment *Investment, startYear int) *Portfolio {
@@ -32,22 +32,22 @@ func NewPortfolio(investment *Investment, startYear int) *Portfolio {
 }
 
 func (p *Portfolio) AddInvestment(investment *Investment) {
-	p.CurrentMonth++ // increment the month
-	if p.CurrentMonth == 12 {
+	p.IncrementCurrentMonth() // increment the month
+	if p.GetCurrentMonth() == 12 {
 		// year got changed
-		p.CurrentMonth = common.JANUARY // initialize month with January
-		p.CurrentYear++  // increment year
+		p.SetCurrentMonth(common.JANUARY) // initialize month with January
+		p.IncrementCurrentYear()  // increment year
 		// initialize new year's investment
 		var investments [12]*Investment
 		// assign current investment to current month of year
-		investments[p.CurrentMonth] = investment
+		investments[p.GetCurrentMonth()] = investment
 		// update Portfolio
-		p.InvestmentHistory[p.CurrentYear] = NewYearlyInvestment(p.CurrentYear, investments)
+		p.SetYearlyInvestment(p.GetCurrentYear(), NewYearlyInvestment(p.GetCurrentYear(), investments))
 	} else {
-		p.InvestmentHistory[p.CurrentYear].UpdateInvestment(p.CurrentMonth, investment)
+		p.UpdateCurrentInvestment(investment)
 	}
 	// check if re-balancing required
-	if p.CurrentMonth == common.JUNE || p.CurrentMonth == common.DECEMBER {
+	if p.GetCurrentMonth() == common.JUNE || p.GetCurrentMonth() == common.DECEMBER {
 		p.Rebalance()
 	}
 }
@@ -55,35 +55,103 @@ func (p *Portfolio) AddInvestment(investment *Investment) {
 func (p *Portfolio) Rebalance() {
 	currentInvestment := p.GetCurrentInvestment()
 	totalInvestment := currentInvestment.GetTotalInvestment()
-	rebalancedEquity := totalInvestment * (p.Allocation.Equity/100)
-	rebalancedDebt := totalInvestment * (p.Allocation.Debt/100)
-	rebalancedGold := totalInvestment * (p.Allocation.Gold/100)
+	rebalancedEquity := totalInvestment * (p.GetAllocation().Equity/100)
+	rebalancedDebt := totalInvestment * (p.GetAllocation().Debt/100)
+	rebalancedGold := totalInvestment * (p.GetAllocation().Gold/100)
 	investment := &Investment{
 		rebalancedEquity,
 		rebalancedDebt,
 		rebalancedGold,
 	}
 	investment.RoundOffInvestment()
-	p.InvestmentHistory[p.CurrentYear].UpdateInvestment(p.CurrentMonth, investment)
-	p.LastRebalance = p.GetCurrentInvestment()
+	p.UpdateCurrentInvestment(investment)
+	p.SetLastRebalance(p.GetCurrentInvestment())
 }
 
-func (p *Portfolio) SetSip(sip *SIP) {
-	p.Sip = sip
+func (p *Portfolio) GetInvestmentHistory()	map[int]*YearlyInvestment  {
+	return p.investmentHistory
 }
 
-func (p *Portfolio) GetCurrentInvestment() *Investment {
-	return p.InvestmentHistory[p.CurrentYear].GetInvestment(p.CurrentMonth)
+func (p *Portfolio) SetInvestmentHistory(ih map[int]*YearlyInvestment)  {
+	p.investmentHistory = ih
+}
+
+func (p *Portfolio) GetYearlyInvestment(year int) *YearlyInvestment  {
+	return p.investmentHistory[year]
 }
 
 func (p *Portfolio) GetInvestment(year int, month common.Month) *Investment {
-	return p.InvestmentHistory[year].GetInvestment(month)
+	return p.investmentHistory[year].GetInvestment(month)
+}
+
+func (p *Portfolio) GetCurrentInvestment() *Investment {
+	return p.investmentHistory[p.GetCurrentYear()].GetInvestment(p.GetCurrentMonth())
+}
+
+func (p *Portfolio) SetYearlyInvestment(year int, investment *YearlyInvestment) {
+	p.investmentHistory[year] = investment
+}
+
+func (p *Portfolio) UpdateInvestment(year int, month common.Month, investment *Investment) {
+	p.investmentHistory[year].UpdateInvestment(month, investment)
+}
+
+func (p *Portfolio) UpdateCurrentInvestment(investment *Investment) {
+	p.investmentHistory[p.GetCurrentYear()].UpdateInvestment(p.GetCurrentMonth(), investment)
+}
+
+func (p *Portfolio) GetSip() *SIP {
+	return p.sip
+}
+
+func (p *Portfolio) SetSip(sip *SIP) {
+	p.sip = sip
+}
+
+func (p *Portfolio) GetAllocation() *Allocation {
+	return p.allocation
+}
+
+func (p *Portfolio) SetAllocation(allocation *Allocation) {
+	p.allocation = allocation
+}
+
+func (p *Portfolio) GetLastRebalance() *Investment {
+	return p.lastRebalance
+}
+
+func (p *Portfolio) SetLastRebalance(investment *Investment) {
+	p.lastRebalance = investment
+}
+
+func (p *Portfolio) GetCurrentMonth() common.Month {
+	return p.currentMonth
+}
+
+func (p *Portfolio) SetCurrentMonth(month common.Month)  {
+	p.currentMonth = month
+}
+
+func (p *Portfolio) IncrementCurrentMonth() {
+	p.currentMonth++
+}
+
+func (p *Portfolio) GetCurrentYear() int {
+	return p.currentYear
+}
+
+func (p *Portfolio) SetCurrentYear(year int)  {
+	p.currentYear = year
+}
+
+func (p *Portfolio) IncrementCurrentYear() {
+	p.currentYear++
 }
 
 // to print current state of portfolio
 func (p *Portfolio) String() string {
 	sb := strings.Builder{}
-	for year, yearlyInvestments := range p.InvestmentHistory {
+	for year, yearlyInvestments := range p.GetInvestmentHistory() {
 		header := "--------   " + strconv.Itoa(year) + "   --------\n"
 		sb.WriteString(header)
 		for _, investment := range yearlyInvestments.Investments {
@@ -92,13 +160,13 @@ func (p *Portfolio) String() string {
 			}
 		}
 	}
-	if p.Sip != nil {
-		sb.WriteString(p.Sip.String())
+	if p.GetSip() != nil {
+		sb.WriteString(p.GetSip().String())
 	}
-	if p.Allocation != nil {
-		sb.WriteString(p.Allocation.String())
+	if p.GetAllocation() != nil {
+		sb.WriteString(p.GetAllocation().String())
 	}
-	sb.WriteString("Current Month: " + p.CurrentMonth.String())
+	sb.WriteString("Current Month: " + p.GetCurrentMonth().String())
 	sb.WriteString("\n---------------------------------------------------------\n")
 	return sb.String()
 }
