@@ -6,6 +6,8 @@ import (
 	"fmt"
 )
 
+// Investment Exporting field to generate
+// deep clone
 type Investment struct {
 	Equity float64
 	Debt float64
@@ -18,13 +20,85 @@ type Allocation Investment
 
 type SIP Investment
 
+func NewInvestment(equity, debt, gold float64) *Investment {
+	return &Investment{
+		Equity: equity,
+		Debt: debt,
+		Gold: gold,
+	}
+}
+
+func NewSip(equity, debt, gold float64) *SIP {
+	return &SIP{
+		Equity: equity,
+		Debt: debt,
+		Gold: gold,
+	}
+}
+
+func NewChange(equity, debt, gold float64) *Change {
+	return &Change{
+		Equity: equity,
+		Debt: debt,
+		Gold: gold,
+	}
+}
+
+func NewAllocation(equity, debt, gold float64) *Allocation {
+	return &Allocation{
+		Equity: equity,
+		Debt: debt,
+		Gold: gold,
+	}
+}
+
+func (i *Investment) GetEquity() float64  {
+	return i.Equity
+}
+
+func (i *Investment) SetEquity(equity float64)  {
+	i.Equity = equity
+}
+
+func (i *Investment) GetDebt() float64  {
+	return i.Debt
+}
+
+func (i *Investment) GetGold() float64  {
+	return i.Gold
+}
+
+func (i *SIP) GetEquity() float64  {
+	return i.Equity
+}
+
+func (i *SIP) GetDebt() float64  {
+	return i.Debt
+}
+
+func (i *SIP) GetGold() float64  {
+	return i.Gold
+}
+
+func (i *Allocation) GetEquity() float64  {
+	return i.Equity
+}
+
+func (i *Allocation) GetDebt() float64  {
+	return i.Debt
+}
+
+func (i *Allocation) GetGold() float64  {
+	return i.Gold
+}
+
 func (i *Investment) AddSIP(sip *SIP) {
 	i.Equity += sip.Equity
 	i.Debt += sip.Debt
 	i.Gold += sip.Gold
 }
 
-func (i *Investment) UpdateInvestment(change Change) {
+func (i *Investment) UpdateInvestment(change *Change) {
 	i.Equity = i.Equity + (change.Equity/100)*i.Equity
 	i.Debt = i.Debt + (change.Debt/100)*i.Debt
 	i.Gold = i.Gold + (change.Gold/100)*i.Gold

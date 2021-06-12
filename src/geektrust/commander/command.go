@@ -6,12 +6,16 @@ import (
 )
 
 type CommandInfo struct {
-	Name common.Command
-	Data common.InvestmentData
-	Month common.Month
+	name common.Command
+	data common.InvestmentData
+	month common.Month
 }
 
-func NewCommandInfo(command common.Command, data []string) *CommandInfo {
+func NewCommandInfo(name common.Command, data common.InvestmentData, month common.Month) *CommandInfo {
+	return &CommandInfo{name: name, data: data, month: month}
+}
+
+func CreateCommandInfo(command common.Command, data []string) *CommandInfo {
 	if !common.VerifyDataSize(command, data) {
 		fmt.Errorf("data size is not correct based on command: %v", command.String())
 	}
@@ -32,4 +36,16 @@ func NewCommandInfo(command common.Command, data []string) *CommandInfo {
 		// do nothing
 	}
 	return &CommandInfo{command, investmentData, month}
+}
+
+func (c CommandInfo) GetName() common.Command {
+	return c.name
+}
+
+func (c *CommandInfo) GetData() common.InvestmentData {
+	return c.data
+}
+
+func (c *CommandInfo) GetMonth() common.Month {
+	return c.month
 }

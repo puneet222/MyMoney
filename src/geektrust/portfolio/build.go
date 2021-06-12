@@ -9,16 +9,16 @@ import (
 func BuildPortfolio(commands []*commander.CommandInfo, startYear int) *Portfolio {
 	portfolio := &Portfolio{}
 	for _, command := range commands {
-		investment := Investment{command.Data.Equity, command.Data.Debt, command.Data.Gold}
-		switch command.Name {
+		investment := NewInvestment(command.GetData().Equity, command.GetData().Debt, command.GetData().Gold)
+		switch command.GetName() {
 		case common.ALLOCATE:
-			portfolio = NewPortfolio(&investment, startYear)
+			portfolio = NewPortfolio(investment, startYear)
 		case common.SIP:
-			sip := SIP{command.Data.Equity, command.Data.Debt, command.Data.Gold}
-			portfolio.SetSip(&sip)
+			sip := NewSip(command.GetData().Equity, command.GetData().Debt, command.GetData().Gold)
+			portfolio.SetSip(sip)
 		case common.CHANGE:
-			roc := Change{command.Data.Equity, command.Data.Debt, command.Data.Gold}
-			if command.Month == common.JANUARY {
+			roc := NewChange(command.GetData().Equity, command.GetData().Debt, command.GetData().Gold)
+			if command.GetMonth() == common.JANUARY {
 				// just update the current investment
 				portfolio.GetCurrentInvestment().UpdateInvestment(roc)
 			} else {
@@ -32,8 +32,8 @@ func BuildPortfolio(commands []*commander.CommandInfo, startYear int) *Portfolio
 				portfolio.AddInvestment(newInvestment)
 			}
 		case common.BALANCE:
-			if command.Month <= portfolio.GetCurrentMonth() {
-				fmt.Println(portfolio.GetInvestment(portfolio.GetCurrentYear(), command.Month).Output())
+			if command.GetMonth() <= portfolio.GetCurrentMonth() {
+				fmt.Println(portfolio.GetInvestment(portfolio.GetCurrentYear(), command.GetMonth()).Output())
 			}
 		case common.REBALANCE:
 			if portfolio.GetLastRebalance() != nil {

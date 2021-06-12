@@ -15,15 +15,15 @@ func GenerateCommands(data []byte) []*CommandInfo {
 		commandData := tokens[1:]
 		switch command {
 		case "ALLOCATE":
-			commands = append(commands, NewCommandInfo(common.ALLOCATE, commandData))
+			commands = append(commands, CreateCommandInfo(common.ALLOCATE, commandData))
 		case "SIP":
-			commands = append(commands, NewCommandInfo(common.SIP, commandData))
+			commands = append(commands, CreateCommandInfo(common.SIP, commandData))
 		case "CHANGE":
-			commands = append(commands, NewCommandInfo(common.CHANGE, commandData))
+			commands = append(commands, CreateCommandInfo(common.CHANGE, commandData))
 		case "BALANCE":
-			commands = append(commands, NewCommandInfo(common.BALANCE, commandData))
+			commands = append(commands, CreateCommandInfo(common.BALANCE, commandData))
 		case "REBALANCE":
-			commands = append(commands, NewCommandInfo(common.REBALANCE, commandData))
+			commands = append(commands, CreateCommandInfo(common.REBALANCE, commandData))
 		}
 	}
 	return commands
