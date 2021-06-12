@@ -27,15 +27,12 @@ var investments = [12]*portfolio.Investment{
 	{13600, 8630, 2966},
 }
 
-var yearlyInvestments = portfolio.YearlyInvestment{
-	Year:        year,
-	Investments: investments,
-}
+var yearlyInvestments = portfolio.NewYearlyInvestment(year, investments)
 
 var expectedPortfolio = portfolio.Portfolio{}
 
 func setup() {
-	expectedPortfolio.SetInvestmentHistory(map[int]*portfolio.YearlyInvestment{year: &yearlyInvestments})
+	expectedPortfolio.SetInvestmentHistory(map[int]*portfolio.YearlyInvestment{year: yearlyInvestments})
 	expectedPortfolio.SetAllocation(&portfolio.Allocation{Equity: 60, Debt: 30, Gold: 10})
 	expectedPortfolio.SetSip(&portfolio.SIP{Equity: 2000, Debt: 1000, Gold: 500})
 	expectedPortfolio.SetLastRebalance(nil)

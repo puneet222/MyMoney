@@ -81,11 +81,11 @@ func (p *Portfolio) GetYearlyInvestment(year int) *YearlyInvestment  {
 }
 
 func (p *Portfolio) GetInvestment(year int, month common.Month) *Investment {
-	return p.investmentHistory[year].GetInvestment(month)
+	return p.investmentHistory[year].GetMonthlyInvestment(month)
 }
 
 func (p *Portfolio) GetCurrentInvestment() *Investment {
-	return p.investmentHistory[p.GetCurrentYear()].GetInvestment(p.GetCurrentMonth())
+	return p.investmentHistory[p.GetCurrentYear()].GetMonthlyInvestment(p.GetCurrentMonth())
 }
 
 func (p *Portfolio) SetYearlyInvestment(year int, investment *YearlyInvestment) {
@@ -154,7 +154,7 @@ func (p *Portfolio) String() string {
 	for year, yearlyInvestments := range p.GetInvestmentHistory() {
 		header := "--------   " + strconv.Itoa(year) + "   --------\n"
 		sb.WriteString(header)
-		for _, investment := range yearlyInvestments.Investments {
+		for _, investment := range yearlyInvestments.GetInvestments() {
 			if investment != nil {
 				sb.WriteString(investment.String())
 			}
