@@ -1,5 +1,11 @@
 package common
 
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
 type Month int
 
 const (
@@ -81,4 +87,47 @@ func GetCommand(command string) Command {
 	default:
 		panic("command not supported")
 	}
+}
+
+type InvestmentData struct {
+	Equity float64
+	Debt float64
+	Gold float64
+}
+
+func GenerateInvestmentData(data []string) InvestmentData {
+	// clean data
+	for i, d := range data {
+		data[i] = strings.ReplaceAll(d, "%", "")
+	}
+	equity, err := strconv.ParseFloat(data[0], 64)
+	if err != nil {
+		fmt.Errorf("error on parsing float (equity) %v", err)
+	}
+	debt, err := strconv.ParseFloat(data[1], 64)
+	if err != nil {
+		fmt.Errorf("error on parsing float (debt) %v", err)
+	}
+	gold, err := strconv.ParseFloat(data[2], 64)
+	if err != nil {
+		fmt.Errorf("error on parsing float (gold) %v", err)
+	}
+	return InvestmentData{Equity: equity, Debt: debt, Gold: gold}
+}
+
+func VerifyDataSize(command Command, data []string) bool {
+	n := len(data)
+	switch command {
+	case ALLOCATE:
+		return n == 3
+	case SIP:
+		return n == 3
+	case CHANGE:
+		return n == 4
+	case BALANCE:
+		return n == 1
+	case REBALANCE:
+		return n == 0
+	}
+	return false
 }

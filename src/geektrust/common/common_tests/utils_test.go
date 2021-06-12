@@ -2,6 +2,7 @@ package common_tests
 
 import (
 	"geektrust/common"
+	"reflect"
 	"testing"
 )
 
@@ -72,6 +73,31 @@ func TestMonth_String(t *testing.T) {
 	}
 }
 
+func TestVerifyDataSize(t *testing.T) {
+	allocate := common.ALLOCATE
+	data := []string{"1000", "2000", "3000"}
+	if !common.VerifyDataSize(allocate, data) {
+		t.Errorf("Error on verify data  size for %s Command", allocate)
+	}
+	sip := common.SIP
+	if !common.VerifyDataSize(sip, data) {
+		t.Errorf("Error on verify data  size for %s Command", sip)
+	}
+	balance := common.BALANCE
+	if common.VerifyDataSize(balance, data) {
+		t.Errorf("Error on verify data  size for %s Command", balance)
+	}
+	rebalance := common.REBALANCE
+	if common.VerifyDataSize(rebalance, data) {
+		t.Errorf("Error on verify data  size for %s Command", balance)
+	}
+	data = append(data, "TEST")
+	change := common.CHANGE
+	if !common.VerifyDataSize(change, data) {
+		t.Errorf("Error on verify data  size for %s Command", balance)
+	}
+}
+
 func assertPanic(t *testing.T, f func()) {
 	defer func() {
 		if r := recover(); r == nil {
@@ -79,4 +105,20 @@ func assertPanic(t *testing.T, f func()) {
 		}
 	}()
 	f()
+}
+
+func TestGenerateInvestmentData(t *testing.T) {
+	data := []string{"10.00%", "-20.45%", "3.56%"}
+	expected := common.InvestmentData{Equity: 10.00, Debt: -20.45, Gold: 3.56}
+	id := common.GenerateInvestmentData(data)
+	if !reflect.DeepEqual(id, expected) {
+		t.Errorf("Error while generating investment data expected %v but got %v", expected, id)
+	}
+	// failing test case
+	data = []string{"1Q.00%", "-2W.45%", "3C.56%"}
+	expected = common.InvestmentData{Equity: 10.00, Debt: -20.45, Gold: 3.56}
+	id = common.GenerateInvestmentData(data)
+	if reflect.DeepEqual(id, expected) {
+		t.Errorf("Error data does not supposed to be equal %v & %v", expected, id)
+	}
 }
